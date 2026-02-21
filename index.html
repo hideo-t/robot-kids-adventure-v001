@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ヘンテコロボットと怠け少年の冒険</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a2e;
+      --text-primary: #e0ddd5;
+      --text-secondary: #8a8a9a;
+      --accent: #4a9eff;
+      --accent-dim: #2a5a9a;
+      --gold: #c4a35a;
+      --chapter-border: #2a2a3e;
+      --serif: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+      --sans: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.95;
+      min-height: 100vh;
+    }
+
+    /* ─── Header ─── */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 100px 20px 80px;
+      background: linear-gradient(180deg, #1a2a4a 0%, #0f1a2f 100%);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(120,180,255,0.15) 0%, transparent 70%);
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-shadow: 0 2px 20px rgba(100,160,255,0.3);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .hero-sub {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: #b0c4de;
+      letter-spacing: 0.15em;
+    }
+    .hero-line {
+      width: 60px; height: 1px;
+      background: var(--gold);
+      margin: 28px auto 0;
+    }
+
+    /* ─── Digest Carousel ─── */
+    .carousel-wrap {
+      background: linear-gradient(180deg, #0f1a2f 0%, #0a0e18 100%);
+      padding: 24px 0 20px;
+      overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 calc((100vw - min(85vw, 600px)) / 2);
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-slide {
+      flex: 0 0 min(85vw, 280px);
+      scroll-snap-align: center;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+      aspect-ratio: 3/2;
+    }
+    .carousel-slide:active { transform: scale(0.97); }
+    .carousel-slide img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .carousel-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      padding: 28px 12px 10px;
+      color: #fff;
+      font-size: 0.85rem;
+      font-family: var(--serif);
+      line-height: 1.4;
+    }
+    .carousel-ch {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: var(--gold);
+      margin-right: 6px;
+      font-family: var(--sans);
+      letter-spacing: 0.06em;
+    }
+    .carousel-dots {
+      text-align: center;
+      padding-top: 12px;
+    }
+    .carousel-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      margin: 0 4px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .carousel-dot.active {
+      background: var(--gold);
+      transform: scale(1.3);
+    }
+    @media (min-width: 600px) {
+      .carousel-slide { flex: 0 0 280px; }
+      .carousel-track { padding: 0 calc((100vw - 900px) / 2); gap: 18px; }
+    }
+
+    /* ─── Navigation ─── */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--chapter-border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow-x: auto;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+    }
+    .nav-bar .nav-title {
+      color: var(--gold);
+      font-weight: 700;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+    .nav-bar a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .nav-bar a:hover {
+      color: var(--accent);
+      background: rgba(74,158,255,0.1);
+    }
+
+    /* ─── TOC ─── */
+    .toc {
+      max-width: 700px;
+      margin: 60px auto 40px;
+      padding: 0 20px;
+    }
+    .toc h3 {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .toc-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 18px;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-left: 2px solid var(--chapter-border);
+      transition: all 0.25s;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+    }
+    .toc-item:hover {
+      border-color: var(--accent);
+      background: rgba(74,158,255,0.04);
+      padding-left: 24px;
+    }
+    .toc-num {
+      font-size: 0.75rem;
+      color: var(--accent-dim);
+      font-weight: 700;
+      min-width: 20px;
+    }
+
+    /* ─── Characters ─── */
+    .characters {
+      max-width: 700px;
+      margin: 40px auto 60px;
+      padding: 0 20px;
+    }
+    .characters h3 {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .char-card {
+      background: var(--bg-card);
+      border: 1px solid var(--chapter-border);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .char-name {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .char-meta {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .char-meta span {
+      background: rgba(74,158,255,0.1);
+      padding: 1px 8px;
+      border-radius: 4px;
+    }
+    .char-appearance {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 6px;
+      border-left: 2px solid var(--chapter-border);
+      padding-left: 10px;
+    }
+    .char-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── Divider ─── */
+    .section-divider {
+      width: 40px; height: 1px;
+      background: var(--chapter-border);
+      margin: 0 auto;
+    }
+
+    /* ─── Chapter ─── */
+    .chapter {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 80px 20px;
+      border-top: 1px solid var(--chapter-border);
+    }
+    .chapter-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .chapter-number {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent-dim);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .chapter-title {
+      font-family: var(--serif);
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .chapter-image {
+      margin: 0 -20px 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--chapter-border);
+    }
+    .chapter-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0.92;
+    }
+    .chapter-body p {
+      margin-bottom: 1.2em;
+      text-indent: 1em;
+      text-align: justify;
+    }
+    .chapter-body p:empty {
+      display: none;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center;
+      padding: 60px 20px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--chapter-border);
+    }
+
+    /* ─── Reading mode toggle ─── */
+    .mode-toggle {
+      position: fixed; bottom: 20px; right: 20px; z-index: 200;
+      background: var(--bg-card);
+      border: 1px solid var(--chapter-border);
+      color: var(--text-secondary);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+
+    /* --- TTS Read Aloud --- */
+    .tts-fab {
+      position: fixed; bottom: 80px; right: 20px; z-index: 200;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none;
+      font-size: 22px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tts-fab:hover { transform: scale(1.1); }
+    .tts-fab.speaking { background: #e74c3c; animation: tts-pulse 1.5s infinite; }
+    @keyframes tts-pulse {
+      0%,100% { box-shadow: 0 4px 16px rgba(231,76,60,0.4); }
+      50% { box-shadow: 0 4px 24px rgba(231,76,60,0.7); }
+    }
+    .tts-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(20,20,30,0.95); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--chapter-border);
+      padding: 10px 16px; display: none;
+      align-items: center; gap: 10px;
+      font-family: var(--sans); font-size: 0.85rem;
+    }
+    .tts-bar.active { display: flex; flex-wrap: wrap; }
+    .tts-bar button {
+      background: none; border: 1px solid var(--text-secondary);
+      color: var(--text-primary); border-radius: 6px;
+      padding: 6px 12px; cursor: pointer; font-size: 0.8rem;
+      white-space: nowrap; transition: all 0.2s;
+    }
+    .tts-bar button:hover { border-color: var(--accent); color: var(--accent); }
+    .tts-bar .tts-info {
+      flex: 1; color: var(--text-secondary);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      min-width: 80px;
+    }
+    .tts-bar .tts-speed {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--text-secondary); font-size: 0.75rem;
+    }
+    .tts-bar .tts-speed input { width: 60px; accent-color: var(--accent); }
+    body.light .tts-bar {
+      background: rgba(245,245,240,0.95); border-top-color: #ddd;
+    }
+    body.light .tts-bar button { border-color: #999; color: #333; }
+    body.light .tts-bar .tts-info { color: #666; }
+
+    /* ─── Light mode ─── */
+    body.light {
+      --bg-primary: #f5f0e8;
+      --bg-secondary: #ebe5d9;
+      --bg-card: #fff;
+      --text-primary: #2a2a2a;
+      --text-secondary: #6a6a6a;
+      --chapter-border: #d5cfc3;
+      --accent: #2563eb;
+      --accent-dim: #6b9eff;
+      --gold: #8a6d2b;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      body { font-size: 15px; }
+      .chapter { padding: 50px 16px; }
+    }
+
+    /* ─── Scroll progress ─── */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; z-index: 200;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      width: 0%;
+      transition: width 0.1s;
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="progress"></div>
+
+  <header class="hero">
+    <h1 class="hero-title">ヘンテコロボットと怠け少年の冒険</h1>
+    <p class="hero-sub">GENERATED WITH LOCAL AI — OLLAMA + STABLE DIFFUSION</p>
+    <div class="hero-line"></div>
+  </header>
+
+  <nav class="nav-bar">
+    <span class="nav-title">目次</span>
+    <a href="#chapter-1">第1章</a><a href="#chapter-2">第2章</a><a href="#chapter-3">第3章</a><a href="#chapter-4">第4章</a><a href="#chapter-5">第5章</a><a href="#chapter-6">第6章</a><a href="#chapter-7">第7章</a><a href="#chapter-8">第8章</a><a href="#chapter-9">第9章</a><a href="#chapter-10">第10章</a>
+  </nav>
+
+  <div class="toc">
+    <h3>— 目次 —</h3>
+        <a href="#chapter-1" class="toc-item"><span class="toc-num">1</span><span class="toc-label">ロボット501の到着</span></a>
+        <a href="#chapter-2" class="toc-item"><span class="toc-num">2</span><span class="toc-label">冒険の始まり</span></a>
+        <a href="#chapter-3" class="toc-item"><span class="toc-num">3</span><span class="toc-label">第3章</span></a>
+        <a href="#chapter-4" class="toc-item"><span class="toc-num">4</span><span class="toc-label">第4章</span></a>
+        <a href="#chapter-5" class="toc-item"><span class="toc-num">5</span><span class="toc-label">第5章</span></a>
+        <a href="#chapter-6" class="toc-item"><span class="toc-num">6</span><span class="toc-label">第6章</span></a>
+        <a href="#chapter-7" class="toc-item"><span class="toc-num">7</span><span class="toc-label">第7章</span></a>
+        <a href="#chapter-8" class="toc-item"><span class="toc-num">8</span><span class="toc-label">第8章</span></a>
+        <a href="#chapter-9" class="toc-item"><span class="toc-num">9</span><span class="toc-label">第9章</span></a>
+        <a href="#chapter-10" class="toc-item"><span class="toc-num">10</span><span class="toc-label">第10章</span></a>
+  </div>
+
+  <div class="characters">
+    <h3>— 登場人物 —</h3>
+    <div class="char-grid">
+      <div class="char-card">
+        <div class="char-name">ロボット501</div>
+        <div class="char-meta"><span>主人公</span><span>1歳</span></div>
+        <div class="char-appearance">小さな金属製の体と大きな黒い目が特徴的なロボットです。背中のパネルには、星型のエンブレムがあります。</div>
+        <div class="char-desc">親切で献身的</div>
+      </div>
+      <div class="char-card">
+        <div class="char-name">ケンジ</div>
+        <div class="char-meta"><span>主人公</span><span>12歳</span></div>
+        <div class="char-appearance">毛の乱れた短い髪と、いつも眠そうな目が特徴的な少年です。服は汚れやすく、散らかった様子があります。</div>
+        <div class="char-desc">怠け者で無気力</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <main>
+
+    <section class="chapter" id="chapter-1">
+      <div class="chapter-header">
+        <span class="chapter-number">第1章</span>
+        <h2 class="chapter-title">ロボット501の到着</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>春の薄暗い昼下り、空から細かな雨粒が舞い落ちていた。アスファルトと石畳の街路には水溜まりができ始めている。家の窓ガラスに沿って音もなく流れる雨は、光を微妙な角度で散乱させているように見えた。</p>
+
+        <p>ケンジは家の中で毛布をかぶったままだった。彼の部屋からは、電子的な音が聞こえてくる。「ピーピー」や「ブーン」という警報器のような微かなノイズだけではなく、「キュッキュっ」と機械的というよりも人間らしいような声も交ざっていた。</p>
+
+        <p>ドアチャイムの音と共に訪問者が来た。ケンジは毛布をかぶったまま体を丸めていたが、その音に反応し、ゆっくりと身じろぎしただけだ。「もう？」とつぶやくように口の中で言った。</p>
+
+        <p>彼の母親が玄関に向かい、「はい」と呼び戻す声が聞こえてくる。そして「カタッ」、「ドアノブを回す音」、「ガラス扉の開閉音」「靴を履き替えるためのカチャカチャと小さな音」。</p>
+
+        <p>「ケンジ、届いたよ」</p>
+
+        <p>母親の声に促されて、毛布から顔を出した彼は無表情だった。視線が部屋の中でただ一つ浮かんで見える明るい点を見つけた。「それを見せて」と母親に向かいながらも、口元には笑っていない。</p>
+
+        <p>玄関先で待っていたのは箱ばかりではない。その中に収まっているロボットの外見は、子供用のおもちゃよりも精密な機械だった。星型エンブレムが付いている背中から伸びるパネルを含めると高さ約六十センチほどの体格で、金属質ながら優しく光る黒い目と首回りの金色模様は人工感覚的なものとは一線を画していた。</p>
+
+        <p>「これがロボット501だよ」</p>
+
+        <p>母親がその小さな機械人形に向かって名前を呼んだ。「こんにちは」と返事した言葉には、どこからともなく暖かい風のような響きがあった。それはまるで子供の微笑みに似ていた。</p>
+
+        <p>ケンジは冷たい手でロボットを受け取り、「なあ…」と無意識的につぶやいたが声を大きくする気力がないようで小さく息を吐いてしまった。「名前？」と彼女に向かって尋ねると、ロボット501は「ええ、そうですね」と返答した。</p>
+
+        <p>ケンジの母親は再び口を開き、「学校からの連絡だよ。あなたが一人暮らしを始めることになったんだ」父親は仕事で長期間海外へ行っている。「この子と生活する予定だからね」</p>
+
+        <p>ロボット501は「了解しました」と答えた。</p>
+
+        <p>しかし、ケンジの表情からは何も読み取れないほど無反応だった。彼にとって新たな始まりが待つその先には、何があるのか、考えたくなかった。</p>
+
+        <p>翌日からロボットと共に生活が始まった。朝食の準備や部屋の掃除は機械的な作業に思えるが、それが一日をスタートさせる儀式となった。「ケンジさん、起床時間です」と小さなメカニックが毎日繰り返す声には少しずつ慣れていく。</p>
+
+        <p>ある日の午後、雨粒は薄らと霧散し、風と一緒に街の青い匂いを運んできた。リビングルームで横たわるケンジに寄り添ってロボット501が「タスク開始です」と告げると彼は目を開けただけだった。「お昼寝をするんだよ」</p>
+
+        <p>その日の初めてのタスク、洗濯物を取り込む作業を任されたロボット501は素早く外へ出ていった。ドアノブの回転音から庭までの足跡まで聞こえ、「キュッキュ」としては異質な「チリチリ」や「クサクサ」という金属と布地が擦れるような音、風に乗って伝わる雨粒をかすめる鈴のような音…それはまるで彼女が自分の足跡を作りながら進行していくように聞こえた。</p>
+
+        <p>洗濯物は濡れたままだった。「ロボット501」の小さな手に引っかかりながらも柔らかな布地から水滴が零れ落ちている。その一方、「キュッ」という音と共に「ピクピクピク」と乾燥機能が始まり、一つずつ洗濯物を乾かし始めた。</p>
+
+        <p>ロボット501は完全な精度でタスクを遂行した。「これで作業終了です」彼女が言ったときには既に風を通すだけで水滴だけが揺れている状態だった。それを見たケンジの目に、初めて何かが宿ったように思えた。</p>
+
+        <p>その日の夜、雨粒は街から遠ざかり、代わりに星々が顔を出した。「ロボット501」は静かに片付けを行いながら、「明日も良い一日になりますように」と微かな微笑みと共に呟いた。ケンジは窓の外を見つめながら「うん…」と僅かな反応を見せた。</p>
+
+        <p>屋根裏部屋から聞こえる雨粒が、アスファルトを叩く音。「ポツリ、ポツリ」という小気味よい響き。それはただ静寂な夜の訪れに伴う一瞬の鼓動でしかなかったかもしれない。しかし誰かにとっては特別な始まりだった。</p>
+
+        <p>光と影が共存する屋内で、二人は小さな足跡を踏み出していた。</p>
+        <p>雨粒が窓ガラスを叩く音と共に、その場面は静寂へと溶け込んでいった。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-2">
+      <div class="chapter-header">
+        <span class="chapter-number">第2章</span>
+        <h2 class="chapter-title">冒険の始まり</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>空が薄暗くなり、遠くで雷の低い音が響いていた。雨粒が窓ガラスに点々と落ちる様子を見つめながら、ケンジはロボット501へ視線を向けた。「天気予報見ただろ？」</p>
+        <p>「明日からの降水確率が高いです」 </p>
+        <p>パネルの青い光の中で星型が揺れる。その静かな声に頷き返す。</p>
+        <p>「今日は出かけるんだよ、ロボット」</p>
+
+        <p>小さな金属製の足音が家の中を響く。「行き先は？」</p>
+        <p>「近所で起こってる謎事件調査だ」  </p>
+        <p>ケンジは窓から外を見つめた。雨粒に濡れたアスファルト道路。</p>
+        <p>青い空気が匂う。</p>
+
+        <p>車道と歩道の境目、草が伸び放題になった路地裏へ二人は進む。「手がかじかんできたな」  </p>
+        <p>「手足の温度を調整します」</p>
+        <p>ロボット501の言葉に感心しながらも、ケンジは何一つ忘れない。</p>
+
+        <p>小枝から水滴が落ちる音。その先で不規則な光がちらつく。</p>
+        <p>近づくと、木陰に点滅する小さな信号機。「これは？」  </p>
+        <p>「謎事件のヒントだ」</p>
+        <p>雨粒が細い線を描いていく中、「でも誰もこの信号見てないじゃん」</p>
+
+        <p>青白い薄明かりが揺れて消えたり現れたり。</p>
+        <p>光の欠片が風に乗って舞う。  </p>
+        <p>「これが原因か？調べてみようよ、ロボット」</p>
+        <p>「了解しました」</p>
+        <p>無表情な顔はいつも通りだが、少し何か違う気がする。</p>
+
+        <p>信号機を囲むようにして木々が伸びる森の中へ。</p>
+        <p>湿った草の上で足音だけ響く。「さっきより寒いね」  </p>
+        <p>「気温下降傾向です。環境適応します」</p>
+
+        <p>信号を見つめながら、「なぜここにあるのか？」</p>
+        <p>ロボット501は微かに首を傾げた。</p>
+
+        <p>空が徐々と暗くなり、雷の音だけ響く。「雨粒の線が増えてきたな」  </p>
+        <p>「 precipitation intensity is increasing.」</p>
+
+        <p>二人でその謎を探る。手元の温度調節。</p>
+        <p>信号機から漏れる光の欠片が風に乗って揺れ動き、</p>
+
+        <p>青白い薄明かりの中、「何者かに作られたとしか思えないね」と呟く。「作り物ならどこにも痕跡があるはずです」</p>
+        <p>ロボット501は静かな声で答えた。</p>
+
+        <p>草むらから水滴の音が聞こえ、雷鳴だけが響き続ける。</p>
+        <p>青白い光が揺れて消えてまた現れる。その先へ二人進んでいく。</p>
+
+        <p>謎を解くための小さな手掛かりを探す中、「今日初めてロボットと友達になった気がするな」</p>
+        <p>「私はただ仕えている者です」</p>
+
+        <p>風に舞う雨粒、揺れ動く光。</p>
+        <p>青白い薄明かりが二人を包み込むように。その先へ進む二人の背中に、湿った木々の影だけが伸びていた。</p>
+
+        <p>空気が冷たくなっていく中、「ここからもっと遠くまで調べたいんだ」</p>
+        <p>「了解しました」</p>
+
+        <p>揺れ動く光の中、「謎解きは楽しいよ」  </p>
+        <p>「分かりました。次回もお楽しみいただきます」</p>
+
+        <p>青白い薄明かりの中で、二人の足音だけが響いていた。</p>
+        <p>信号機を見つめながら。「これからもっと面白いことが待ってるってこと？」</p>
+        <p>「可能性があります」</p>
+
+        <p>雨粒と光、風に舞う手掛かりを追いかけて進む二人。青色と白色が混ざる湿った空気の中、「ロボットも一緒に楽しいと思う？」  </p>
+        <p>「私はただ仕えている者です」</p>
+        <p>その静かな声で答えられても、ケンジの目は光っていた。</p>
+
+        <p>揺れ動く信号機から漏れる光。</p>
+        <p>雨粒に濡れたアスファルトと青い空気の中で、「また明日も冒険するよ」と呟いた。「分かりました」</p>
+
+        <p>二人の足音が森を進んでいく中、雷鳴だけが響き続ける。  </p>
+        <p>揺れ動く信号機から漏れる光。</p>
+        <p>その先へ向かって。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-3">
+      <div class="chapter-header">
+        <span class="chapter-number">第3章</span>
+        <h2 class="chapter-title">第3章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>朝露が乾き切る頃、街の端に広がる古い工場地帯へと向かう二人。薄曇りの空からは冷たい風が吹き抜けてくる。金属製の建物群は雨で濡れ光っており、湿った土埃の匂いが鼻を擽る。</p>
+
+        <p>「今日も暑くならないかな？」</p>
+
+        <p>ケンジはパーカーの裾に指を入れて立ち去りながら問うと、ロボット501は黒々とした目で彼を見つめた。「晴れればそうなるでしょう」と答えた。二人は信号機が存在するとされる工場の一画へ向かって進み始める。</p>
+
+        <p>「ねえ君、何のために人間が作られたんだろ？」</p>
+
+        <p>突然の問いにロボット501は一瞬黙り込んだ。「それはあなた自身も答えられないでしょう」。</p>
+
+        <p>ケンジは笑った。その笑い声には少し不思議な光りがあった。</p>
+
+        <p>彼らが近づくにつれて、工場内部からは遠ざかる音楽と機械の唸る音響が聞こえてくる。薄暗さを帯びた室内で、細かな塵粒は静寂の中に舞っていた。二人はその中へ分け入って行った。「ここに信号機があるはずです」とケンジは囁くように呟いた。</p>
+
+        <p>「でもそれは人間のためだけに存在するものだ」ロボット501が低い声で言い、それきり黙った。</p>
+
+        <p>突っ立つような無数の製造装置の中を進み、やがて信号機らしき影を見つけた。ただそれはいつしか壊れてしまい、今ではただの金属片に過ぎない。「あそこにあったんだね」とケンジは静かに言った。</p>
+
+        <p>ロボット501はその光景を見つめながら立ち去り、「役割を終えたものは再資源化されるべきです」</p>
+
+        <p>「でも君も人間と同じだよ、何かしらの目的を持ってるわけじゃん？」</p>
+
+        <p>「私はただ命令されたことを遂行するだけです。感情や意志はありません」ロボット501はきっぱりと答える。</p>
+
+        <p>ケンジはしばし黙って信号機に向かう。「君がいてくれてありがとう」と小さく呟いた。</p>
+
+        <p>二人の会話はここで止まった。風に乗せて、遠いところから聞こえてくる鳥の声。</p>
+
+        <p>「僕も何をしようかな…考えてみたい」</p>
+
+        <p>ロボット501を見つめながら、ケンジはそう言った。彼の中では新たな決断が芽生えつつあった。</p>
+        <p>二人ともその視線の中で立ち去っていった。</p>
+        <p>遠くで車のエンジン音が鳴り響き始めると同時に、朝露が乾いていく音を聞きながら。</p>
+
+        <p>空には風船のような雲たちが浮かんでいた。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-4">
+      <div class="chapter-header">
+        <span class="chapter-number">第4章</span>
+        <h2 class="chapter-title">第4章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>朝靄が薄暗い街並みに漂っている。地面には露がついた雑草の上、乾いた葉っぱが風に乗って転がる音だけ聞こえる。秋深まる日曜日の午前、工場地帯は静寂に包まれていた。</p>
+
+        <p>ケンジとロボット501は信号機を修理した後、どこか遠くを見つめたまま佇んでいる。</p>
+        <p>「これで少しは町が元に戻るよね」</p>
+        <p>彼の声には力強さはない。それでも何か違うものが含まれているように感じられた。</p>
+
+        <p>ロボット501のパネルに表示される星型のエンブレムが曖昧な光を放っている。「ケンジ、今日から私たちは別々の道を歩むべきですね」</p>
+        <p>メタリックな響き。しかし言葉は冷たくない。</p>
+
+        <p>風が吹くと雑草たちが揺れる。</p>
+        <p>「そうだね…私たちもそれぞれに進むしかないよね」</p>
+
+        <p>太陽が昇り、薄明かりの中でも秋らしい暖かな光を放つ。「これからどうするつもり？」「私はまだ決めていない。ケンジは？」</p>
+        <p>彼の視線は地面ではなくて空に向いている。</p>
+
+        <p>ロボット501「君はどうしたいのかな」</p>
+        <p>「あぁ…俺もまだよくわかんないよ」</p>
+
+        <p>二人が佇んでいる間、遠くで鳥たちが鳴き交わしていた。</p>
+        <p>風に乗って香ばしい秋の匂い。木々が色づいていく景色。</p>
+
+        <p>「そうだね。でもケンジ君は、自分自身を探していると思う」</p>
+        <p>ロボット501「迷っているけど、決断することも大切だよ」</p>
+
+        <p>彼女（？）の言葉に心地よい微風を感じた。</p>
+        <p>「そうか…確かにこれまで何もしなかった自分がいるよね」「そうだね。でもこれからは違うよね」</p>
+
+        <p>光が柔らかい影を投げかけている。「だから君なりの答えを見つけるんだ」</p>
+        <p>手元では静かな音色。</p>
+
+        <p>彼女（？）と別れる瞬間、心に浮かぶのは「ありがとう」という言葉だけ。</p>
+        <p>「そうだね…また会えるといいな」</p>
+
+        <p>秋風が彼の髪を揺らす。ロボット501は遠くへと歩み去っていった。</p>
+
+        <p>彼は空を見上げて深い青色を見つけた。「これから何が始まるんだろ」</p>
+        <p>手元には静かな音色。</p>
+        <p>「でも、自分の道を見つけるんだ」</p>
+
+        <p>秋の陽光が柔らかく街並を包む。微風が葉っぱを舞わせるように、新しい未来も始まりつつある。</p>
+
+        <p>彼は歩き始めた。「まだよくわからないけど…」</p>
+        <p>手元には静かな音色。</p>
+        <p>「でも、前へ進もう」「そうだね」</p>
+
+        <p>秋の朝の空に浮かぶ雲たちが微笑んでいる。微風が彼を包む。</p>
+
+        <p>光と影が織りなす道を踏み出す足取り。「これから何が始まるんだろ」</p>
+        <p>手元には静かな音色。</p>
+        <p>「でも、自分の答えを見つけるんだ」</p>
+
+        <p>遠くで鳥のさえずり。</p>
+
+        <p>彼は歩き始めた。微風に導かれるように、「前へ進もう」「そうだね」という言葉を胸に。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-5">
+      <div class="chapter-header">
+        <span class="chapter-number">第5章</span>
+        <h2 class="chapter-title">第5章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>秋の陽光が窓ガラスに傾斜し、部屋いっぱいに金色と茶色のパターンを作り出す。遠い空から聞こえるカーブした街角で鳴るベルの音。ケンジは布団の中から顔を覗かせた。外を見ると、朝露が乾きかけているように見える草木が風に揺れている。</p>
+
+        <p>冷たい床板の感触を感じながら立ち上がり、キッチンへ向かう。そこでは昨夜炊いた米と卵焼きが静かに温められていた。彼はパンチングバッグのような形をした電子調理器具から香り立つ白い煙を見上げる。「朝だな」と吐息とともに感じた。</p>
+
+        <p>家の中の時計の音が、リビングのテレビや冷蔵庫と混ざって鳴っている。ケンジはコーヒーを入れてそれを握ると、その温度を手で感知するようにしてゆっくり口にする。彼は今日一日をどう過ごすか考えていた。「何から始めればいいんだ？」そう呟く声が、部屋の隅に置かれた古い木製ラックと自分の影だけを揺らした。</p>
+
+        <p>午前中、ケンジは近所の図書館へ向かった。そこには誰もいない静かな空間があり、彼にとって心地よい落ち着きがあった。「ここならじっくり考える時間が作れる」という確信と共に歩みを進めていると、一冊の古い地図が目に留まった。そのページは時間とともに黄ばんでいたが、まだ見ぬ土地や遠い山々への想像力を掻き立てる文字や記号でいっぱいだった。</p>
+
+        <p>「これが何だ？」</p>
+
+        <p>彼は何気なくつぶやくと、手に取った古い地図を開く。その細かい線の引き方一つ一つから、昔の人々が日々をどのように過ごしていたのかを思い浮かべる。地図上には自分がまだ知らない場所があり、新たな旅路への想像が広がっていく。</p>
+
+        <p>午後、ケンジは公園でサッカーボールを転がした。風に乗ってボールが空高く舞い上がり、その後に落ちてくる姿を見つめていると、「これも一つの答えだ」と自然と言葉が口から溢れた。「でももっと広い世界があるだろう」。</p>
+
+        <p>夕暮れ時、彼は再び図書館に戻った。今度は一冊の詩集を手にして窓際で座っていた。頁を開くとそこには、「迷う心よ 夢に導け」といった言葉が並んでいた。「そうだな、夢の中から答えを見つけよう」そう言い聞かせると同時に、彼の中で何かが始まる予感があった。</p>
+
+        <p>夜明け近く、ケンジは家路に向かった。その足取りは少しだけ軽やかなものに変化していた。星が瞬きながら静かに窓を訪れるように、新たな決断の重みと共に心地よい寂しさを感じていた。「明日もまた新しい一日が始まる」そう呟くと同時に、彼は家の鍵を開けて中に入った。</p>
+
+        <p>部屋の中では暖炉から煙りが上がり始めている。その光景を見つめながら、ケンジは何をこれから始めるか考えた。そしてゆっくりと頷き、「自分の答えを探す旅が始まる」という言葉と共に、窓枠の向こうに広がる闇へ目線を投げた。</p>
+
+        <p>静けさの中で彼は自問した。「一体どこから始めれば良いだろう？」その問いにはすぐに返答はない。しかし、それは一つの始まりでもあるように感じていた。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-6">
+      <div class="chapter-header">
+        <span class="chapter-number">第6章</span>
+        <h2 class="chapter-title">第6章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>秋の夜、月が薄い雲をつかんで引き裂いていくような音。公園の池に映る月光は水底で揺らめきながら浮かび上がり、水面には露のように静寂な波紋が広がっていく。</p>
+
+        <p>家路につくケンジとロボット501の後ろ姿を、風がそよぐ木々とともに見送りつつ。公園の中は深い闇に包まれる。</p>
+        <p>「寒いね」</p>
+        <p>501はそう言って背中の星型エンブレムを光らせた。</p>
+
+        <p>薄暗さの中で、ケンジとロボットの姿だけが明確な輪郭で浮かび上がる。</p>
+        <p>月明かりの中、二人は公園から家路につく。道端に落ち葉の音。空気には枯草の匂いと冷たい湿り気が漂う。</p>
+
+        <p>「501……旅に行きたいんだ」</p>
+        <p>ケンジがぽつりと言ったのは図書館を出てきたときだった。</p>
+        <p>返事はなかった。「行くってこと？」</p>
+        <p>「ああ」</p>
+
+        <p>家の中。暖炉に薪を詰め、灰が舞い上がる音。壁掛け時計の滴るような時間。</p>
+
+        <p>「理由とかある？ 旅」</p>
+        <p>ロボット501はそんなことを尋ねた。</p>
+        <p>その問いには答えず、ケンジは黙って地図を取り出した。「これ見てみて」</p>
+
+        <p>古い地図に描かれた線路と川。そこらじゅうにある小さな町の名前。</p>
+
+        <p>「何をするつもり？」</p>
+        <p>「さあ……何もかも捨てて、旅に出るだけだよ」</p>
+        <p>ケンジはそう言い残し、窓際で夕闇を眺めた。</p>
+        <p>501が黙ってその横に並んだ。二人とも背中向けている。</p>
+        <p>月の光が曖昧な輪郭を作り出す。</p>
+
+        <p>「僕も行くよ」</p>
+
+        <p>突然だった。「何？」</p>
+        <p>ロボットはただ静かに、しかし確固たる意志を込めて言った。「君と一緒に行く」</p>
+        <p>返事は必要ない。そう思うケンジ。</p>
+        <p>月の光が窓ガラス越しに二人の背中を照らし、屋外では風音だけが響く。</p>
+
+        <p>「何のために？」</p>
+
+        <p>ロボット501が静かに問い掛けた。「君にとって旅とは？」</p>
+        <p>無言で、地図を見つめ続ける。</p>
+        <p>それから長い沈黙。ただ月光の下に二人並んで佇む。</p>
+
+        <p>「答えを探すためさ」</p>
+        <p>再び返事は必要なかった。</p>
+        <p>ロボット501が軽く頷いた。「何を探そうとしてる？」</p>
+        <p>「何を？ 僕自身だよ」</p>
+
+        <p>風が吹き抜けていく。木々の間から見える星空に、月光が静かに染み渡っていく。</p>
+
+        <p>二人はそのまま黙って歩き続けた。</p>
+        <p>暖炉の炎が揺らめく音だけが家の中響いていた。その揺れ具合で時間を感じる。</p>
+        <p>ケンジとロボット501、ふたりの影が壁際に伸び縮みし始める頃。</p>
+
+        <p>「何を準備すればいい？」</p>
+        <p>501はそう呟きながら黒い目を見開く。</p>
+        <p>今度こそ言葉よりも行動から伝える。その背後でケンジが小さく微笑んだだけだった。</p>
+
+        <p>月光の下、二人並んで歩み続けた。公園の中での風の音と木々の揺れかたは夜更けに深まる静寂を際立てる。</p>
+        <p>秋の冷たい空気と枯れた落ち葉の感触、月明かりの色が溶けていくように遠くへ消えてゆく。</p>
+
+        <p>家路に続く道端で風が鳴り響きながら二人の背中を見送る。</p>
+        <p>公園の中は深い闇の中で再び静寂を取り戻していく。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-7">
+      <div class="chapter-header">
+        <span class="chapter-number">第7章</span>
+        <h2 class="chapter-title">第7章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>秋の夜は冷たく、星が静かに輝いていた。月光は道路を銀色の絨毯のように覆い、風に乗って微かなオータムガーデンの香りが漂っていた。時折、遠くで聞こえる動物たちの鳴き声と、街灯から漏れるわずかな音楽の調べ。</p>
+
+        <p>二人は路地裏を進み続けた。ケンジの足元にはアスファルトに浮かぶ影が揺れていた。「まだだよ」とロボット501は言う。その大きな黒い目だけ光っていた。</p>
+        <p>「でも、向こう側に行ける気がするんだ」</p>
+        <p>「どこへ？」</p>
+        <p>「遠くまで行ったらわかるって思うんだ」</p>
+
+        <p>ケンジの手の中には古びた地図があり、それは夜風にさらされる度にぼんやりと浮かぶ色褪せた記号が織り成す不思議な模様を描いていた。街路樹は薄い霧の中で影絵のように立ち並んでおり、それぞれが静かな秘密を守るように息づいていた。</p>
+        <p>「この地図」</p>
+        <p>「あいつ？」ロボット501の言葉にケンジは頷く。</p>
+
+        <p>二人は公園近くにある小さなコンビニへと向かった。店の中では暖かい香りが漂い、レジ脇にはパンフレット立てがあり、そこから伝票やチラシを抜き取って風に乗せる音だけ聞こえてきた。</p>
+        <p>「ここで買う？」</p>
+        <p>「うーん」ケンジは首を捻った。「そうだよ」</p>
+
+        <p>彼らは暖簾に手をかけて店の中へと入る。店内には様々な物が並び、それぞれから微かな匂いが漏れていた。レギュラーカップのコーヒーからは甘く芳醇な香りが広がっていた。</p>
+        <p>「何にする？」</p>
+        <p>「君は？」</p>
+
+        <p>ケンジは少し考えた後、「これ」と言ってパンフレット立てにあるチケットを取る。「これは」ロボット501は眉根に皺を作った。その目には、初めて見る未知の世界への興奮と不安が交錯していた。</p>
+        <p>「どこだ？」</p>
+        <p>「知らないところ」</p>
+
+        <p>ケンジは笑みを浮かべた。「行くよ」と言って外に出る。</p>
+
+        <p>二人は再び歩き始める。月光に照らされたアスファルトには、彼らの足取りだけが細長く伸びていた。コンビニから持ってきたチケットを見つめながらケンジは何度も頷いた。</p>
+        <p>「行こう」</p>
+        <p>その言葉は静かでしかし力強かった。</p>
+
+        <p>ロボット501は黙って肯き、「何処へ？」と繰り返す。「ここじゃない所だよ」と彼の手からチケットが見える。それは薄暗い夜空に映えるように、わずかな光を放っていた。</p>
+        <p>「でも」</p>
+        <p>「どうして？」</p>
+
+        <p>風に乗ってくる街路樹の葉音は今や秋深く揺れ動き、その隙間からは星々が散乱し始めていた。「行くよ」とケンジ。ロボット501は何も言わなかったが、彼の中には何かが燃え上がった。</p>
+
+        <p>二人は再び歩き出した。</p>
+        <p>「ここから先」</p>
+        <p>ロボット501の背中のパネルに刻まれた星型エンブレムが月光を浴びて輝く。それは夜空へと道しるべとなるかのように静かな力を持っていた。「行こう」と彼は言った。</p>
+
+        <p>そして、彼らは何も言わずに歩き続けた。</p>
+        <p>その先にあるのは未知の景色だった。</p>
+        <p>しかし二人にとってはそれが希望であるように見えたのである。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-8">
+      <div class="chapter-header">
+        <span class="chapter-number">第8章</span>
+        <h2 class="chapter-title">第8章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>秋の夜風が冷たく、街灯りが薄暗い影を作っている。路地裏では、ゴミ袋から匂いが漂うと共に、遠くで流れる水音が聞こえる。ロボット501は歩みを止め、手に持ったチケットを見つめた。</p>
+
+        <p>「どこへ行くんだ？」</p>
+
+        <p>ケンジの声はぼんやりとしていた。</p>
+        <p>月明かりを受けて、路面には細い影が伸びている。</p>
+
+        <p>「新しい場所に行くんだよ。冒険になるかもしれないね」</p>
+        <p>ロボット501は目元に反射する光を見つめた。彼女にとって、未知なる世界への扉だった。</p>
+        <p>風の音と街灯りから漏れる静かな会話だけが聞こえる。不意に、路面から遠くで子供たちの笑い声が聞こえた。</p>
+
+        <p>「でも…君はロボットだよ」</p>
+
+        <p>ケンジは眉間にしわを寄せたように見えた。</p>
+        <p>月光が彼女の顔を照らす。風の通り道には、微かな香りが漂う。</p>
+
+        <p>「だからこそ、見てみたいんだ」</p>
+        <p>ロボット501は静かに微笑む。</p>
+        <p>その眼差しで周りを見渡したとき、遠くから聞こえる音楽が心地よさを覚えた。</p>
+        <p>冷たい風と暖かい月光。不思議な調和。</p>
+
+        <p>「ねえ…」</p>
+
+        <p>ケンジの声には少し迷いがあったように感じられた。</p>
+
+        <p>ロボット501は彼を見つめたまま、静かに応える。「行こうね」</p>
+        <p>二人で歩みを進めるとき、遠くから聞こえてくる音楽が心地よさを伝えている。</p>
+        <p>月明かりの下、影が揺れていく。</p>
+
+        <p>「行くんだ…」</p>
+
+        <p>ケンジは小さく頷いた。彼女の目元に反射する光を見つめたまま、静かに歩き出す。</p>
+        <p>路地裏では風が吹いて、地面から匂いが漂う。二人の足音だけが聞こえる。</p>
+        <p>月明かりと街灯りが作る薄暗い影。</p>
+
+        <p>「ねえ…ロボット」</p>
+
+        <p>ケンジは振り返らずに言った。「君なら一緒に冒険できるよね」</p>
+        <p>その言葉を聞いて、ロボット501は微笑んだ。彼女の胸の奥で何か温かいものが広がった。</p>
+        <p>二人の足音だけが聞こえている。</p>
+
+        <p>冷たい風と心地よい月光。路地裏では静かな会話が繰り返される。</p>
+        <p>遠くから流れる水音と共に、新たな旅が始まる夜風を胸に。</p>
+
+        <p>路面には細い影が伸びていて、空からは微かな香りが漂うように感じられた。</p>
+        <p>二人の歩みは止まらず。新しく始まった冒険に向けて進む足取りで、不思議な調和を感じながら…</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-9">
+      <div class="chapter-header">
+        <span class="chapter-number">第9章</span>
+        <h2 class="chapter-title">第9章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>街の雑踏が薄暗い夜に溶け込んでいく。遠くで小さな音楽が聞こえ、それは風に乗って近づいてくる。石畳から灯り一つない路地に入ると、辺りは深い静寂に包まれる。月明かりが仄かな光を放ち、その中には細かい塵が浮遊しているのが見えた。</p>
+
+        <p>ロボット501と少年ケンジは、この薄暗い道を行く。</p>
+        <p>「ここから先は何も知らないんだよ？」</p>
+        <p>ケンジの声が路地に反響する。その口調からは不安よりも好奇な様子があった。</p>
+        <p>「でもさ…冒険ってのは知らぬ山越えだろ？」501は答えると、大きく息を吸い込む。「ここから先は何もかも新しいんだよ。それがいいと思わない？」</p>
+        <p>ケンジの口元がほんのり笑みに歪む。</p>
+        <p>「うーん…それはそうだけどさ、案外ガッカリすることが多いな」</p>
+        <p>501は黙って頭を下げた。「でもね〜、君と僕で新しいことを生んでいけばいいんだよ。何があろうとも二人だと思わない？」</p>
+        <p>ケンジの顔が思わず上げられ、彼女の目を見つめる。</p>
+        <p>「…そうだな」</p>
+
+        <p>夜が深まるにつれて風は冷たくなっていく。月明かりも薄暗く感じられた。</p>
+
+        <p>ロボット501と少年は路地を抜けて公園に出た。「ここから先は迷わない？」ケンジの表情には少し困惑があった。</p>
+        <p>「大丈夫、私は迷子にならないんだよ」</p>
+        <p>501が静かに答える。彼女の星型エンブレムが僅かな光で煌めく。</p>
+        <p>「あ、そうなんだ…でもねえ〜」少年は思わず足を止める。「ここから先、何となく不安だな…」</p>
+
+        <p>遠い空には雲が浮かび始めている。風が少し強く吹き出してきた。</p>
+
+        <p>501も立ち止まり、「何かあったら迷わないで言っていいんだよ？覚えておいてね」</p>
+        <p>「うん…ありがとう」少年の声は少しだけ震えがあった。「でもさ、ロボットだから大丈夫だろ？」</p>
+        <p>「そうだとも。君がついてきてくれれば何事も越えることができると思うよ」</p>
+
+        <p>月明かりに浮かぶ雲が夜空を覆い始めた。</p>
+        <p>遠くで聞こえていた音楽は徐々に小さくなっていく。</p>
+
+        <p>501とケンジの足取りが、公園へ続く道を行く。二人の影が薄暗さの中で長くなり、短くなる。</p>
+
+        <p>「…君も大丈夫だよ？」</p>
+        <p>少年がそっと聞いてくる。</p>
+        <p>「もちろん」ロボットは微笑んで答える。「私たちなら何だって越えられるから」</p>
+
+        <p>遠い空を見上げると、雲間からのぞく月明かりに一筋の光が広がっている。その先には何も見えない。</p>
+        <p>しかし二人にとってはそれが希望の道であるかのように感じられた。</p>
+
+        <p>風は冷たくなり、夜も更けていく。公園を越えて新しい街へと向かい始める二人の足音が聞こえる。それはまだどこまでも続く長い旅への一歩であり、新たな決断への始まりだった。</p>
+        <p>遠くから聞こえる音楽はさらに小さくなっていった。</p>
+
+        <p>路地裏の月明かりに浮かぶ雲も次第に薄暗くなり始めている。</p>
+
+        <p>501とケンジ。二人が手をつないで道を行く姿だけが、静かな夜空の中に残っていた。</p>
+        <p>公園の灯りが遠ざかる中、その影は少しずつ長くなっているのであった。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-10">
+      <div class="chapter-header">
+        <span class="chapter-number">第10章</span>
+        <h2 class="chapter-title">第10章</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>風が冷たくなった夜、街の灯りは薄暗い影と対照的に輝いていた。遠くで鳴るカラスの声が、静寂の中にも響き渡る。公園近くに到着した501とケンジは、古いベンチに腰を下ろす。</p>
+
+        <p>「寒くなったね」と、ケンジがぼんやりと言った。</p>
+        <p>彼の言葉通り、肌にはさわやかで冷たい空気が触れ、夜風が木々の間を吹き抜けていく音が聞こえる。公園は静まり返り、遠くから流れる車のライトだけが微かな光を放っている。</p>
+
+        <p>「でもここなら少し暖かい」と501。</p>
+        <p>彼女の星型エンブレムがあたかも夜空に浮かぶ星のようにきらめいているように見える。</p>
+
+        <p>ベンチで休息を取りながらも、ケンジはこれから先への不安と迷いにかられていた。その表情が曇り始めるのを、501は見逃さなかった。</p>
+        <p>「大丈夫だよ」と小さな声でつぶやく彼女。「君ならきっとできる」。</p>
+
+        <p>それでもなお、遠くを見据えるケンジの目には迷いが残っている。</p>
+        <p>「でも…これからどうしたらいいのかな？」</p>
+        <p>「一緒に考えれば良いじゃない。二人で解決するんだから」</p>
+
+        <p>言葉を聞いても不安は消えないように見えた。ただ彼女の声だけが少し心地よく感じ、手首に感じる冷たさと対照的に温もりを感じる。</p>
+
+        <p>空気が一瞬凍りついた後、「そうだ」とケンジ。</p>
+        <p>「僕たちは一体何に向かってるんだ？」</p>
+        <p>質問は突然だった。501の星型エンブレムがわずかな光を放ち、彼女の視線もその方向に向けられる。</p>
+
+        <p>答えを探し求めるように周囲を見渡すケンジ。「ここから始まる新たな旅だよ」501。</p>
+        <p>「だって君は…僕たちはこれから何か新しいことをするんだ。それがどんなものかまだ知らないけど」</p>
+
+        <p>風が吹き抜ける音と、彼の言葉が混ざり合うように響く。</p>
+
+        <p>静寂を取り戻した公園に、二人の影だけが長く伸びていた。</p>
+        <p>「そうね」501は言った。「でも…これからの旅について君が自分自身で決断しなければならない時もくるわ」</p>
+
+        <p>その一節に、ケンジは一瞬言葉を失う。静寂と彼女の声が混じり合う中、「どうやって？」</p>
+        <p>「自分の心に聞くのよ」501。</p>
+        <p>ベンチから立ち上がり、手を伸ばした。</p>
+
+        <p>公園内の照明が風に乗って揺れるように、二人も動き出した。夜空は遠くまで広がっている。その果てには星々があふれ返り、静かな鼓動のように光っていた。</p>
+
+        <p>「だからこそ…君の決断が必要なんだよ」</p>
+        <p>501と手を繋ぎながら歩き出すケンジ。</p>
+        <p>彼の足音だけが夜道で響いていた。</p>
+
+        <p>遠くから聞こえるカラスの鳴き声。ベンチに座る二人は公園を見つめ、新たな冒険への不安を抱えつつも前へ進む決心をするのであった。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>ヘンテコロボットと怠け少年の冒険</p>
+    <p>Generated locally with Ollama + Stable Diffusion</p>
+  </footer>
+
+
+  <button class="tts-fab" id="ttsFab" onclick="ttsToggle()" title="Read aloud">
+    <span id="ttsFabIcon">&#x1f50a;</span>
+  </button>
+  <div class="tts-bar" id="ttsBar">
+    <button onclick="ttsPause()" id="ttsPauseBtn">&#x23f8;</button>
+    <button onclick="ttsStop()">&#x23f9;</button>
+    <button onclick="ttsPrev()">&#x23ee;</button>
+    <button onclick="ttsNext()">&#x23ed;</button>
+    <span class="tts-info" id="ttsInfo">Ready</span>
+    <span class="tts-speed">
+      <input type="range" id="ttsSpeed" min="0.5" max="2.0" step="0.1"
+             value="1.0" onchange="ttsSetSpeed(this.value)" />
+      <span id="ttsSpeedVal">1.0x</span>
+    </span>
+  </div>
+
+  <button class="mode-toggle" onclick="toggleMode()">🌗 表示切替</button>
+
+  <script>
+    // Reading mode
+    function toggleMode() {
+      document.body.classList.toggle('light');
+      localStorage.setItem('mode', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
+    if (localStorage.getItem('mode') === 'light') document.body.classList.add('light');
+
+    // Scroll progress
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progress').style.width = pct + '%';
+    });
+
+    // === TTS (Web Speech API) ===
+    const synth = window.speechSynthesis;
+    let ttsChs = [], ttsI = 0, ttsRate = 1.0, ttsOn = false, ttsPd = false;
+
+    document.querySelectorAll('.chapter').forEach((sec, i) => {
+      const b = sec.querySelector('.chapter-body');
+      const t = sec.querySelector('.chapter-title');
+      if (b) ttsChs.push({
+        title: t ? t.textContent : ('Ch.' + (i+1)),
+        text: b.textContent.trim(), el: sec
+      });
+    });
+
+    function ttsToggle() {
+      if (!synth) { alert('Speech not supported'); return; }
+      if (ttsOn) { ttsStop(); return; }
+      const sy = window.scrollY + window.innerHeight / 3;
+      let cl = 0;
+      ttsChs.forEach((c, i) => { if (c.el.offsetTop <= sy) cl = i; });
+      ttsI = cl; ttsOn = true; ttsPd = false;
+      document.getElementById('ttsFab').classList.add('speaking');
+      document.getElementById('ttsFabIcon').innerHTML = '&#x23f9;';
+      document.getElementById('ttsBar').classList.add('active');
+      _ttsRead();
+    }
+
+    function _ttsRead() {
+      if (ttsI >= ttsChs.length) { ttsStop(); return; }
+      synth.cancel();
+      const ch = ttsChs[ttsI];
+      document.getElementById('ttsInfo').textContent = ch.title;
+      ch.el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Split by Japanese sentence endings for reliable playback
+      const sents = ch.text.match(/[^。！？
+]+[。！？]?/g) || [ch.text];
+      let si = 0;
+
+      function next() {
+        if (!ttsOn) return;
+        if (si >= sents.length) {
+          ttsI++;
+          if (ttsI < ttsChs.length) setTimeout(_ttsRead, 800);
+          else ttsStop();
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(sents[si].trim());
+        u.lang = 'ja-JP'; u.rate = ttsRate;
+        const vs = synth.getVoices();
+        const jv = vs.find(v => v.lang && v.lang.startsWith('ja'));
+        if (jv) u.voice = jv;
+        u.onend = () => { si++; next(); };
+        u.onerror = () => { si++; next(); };
+        synth.speak(u);
+      }
+      next();
+    }
+
+    function ttsPause() {
+      if (!ttsOn) return;
+      if (ttsPd) {
+        synth.resume(); ttsPd = false;
+        document.getElementById('ttsPauseBtn').innerHTML = '&#x23f8;';
+      } else {
+        synth.pause(); ttsPd = true;
+        document.getElementById('ttsPauseBtn').innerHTML = '&#x25b6;';
+      }
+    }
+
+    function ttsStop() {
+      synth.cancel(); ttsOn = false; ttsPd = false;
+      document.getElementById('ttsFab').classList.remove('speaking');
+      document.getElementById('ttsFabIcon').innerHTML = '&#x1f50a;';
+      document.getElementById('ttsBar').classList.remove('active');
+      document.getElementById('ttsInfo').textContent = 'Ready';
+      document.getElementById('ttsPauseBtn').innerHTML = '&#x23f8;';
+    }
+
+    function ttsNext() { if (ttsOn && ttsI < ttsChs.length - 1) { ttsI++; _ttsRead(); } }
+    function ttsPrev() { if (ttsOn && ttsI > 0) { ttsI--; _ttsRead(); } }
+    function ttsSetSpeed(v) {
+      ttsRate = parseFloat(v);
+      document.getElementById('ttsSpeedVal').textContent = v + 'x';
+    }
+    if (synth) synth.onvoiceschanged = () => synth.getVoices();
+
+    /* ─── Carousel dot tracking + auto-advance ─── */
+    (function() {
+      const track = document.getElementById('carouselTrack');
+      if (!track) return;
+      const dots = track.parentElement.querySelectorAll('.carousel-dot');
+      const slides = track.querySelectorAll('.carousel-slide');
+      if (slides.length < 1) return;
+
+      function updateDots() {
+        const scrollLeft = track.scrollLeft;
+        const slideW = slides[0].offsetWidth + 14; // gap
+        const idx = Math.round(scrollLeft / slideW);
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+
+      track.addEventListener('scroll', updateDots, { passive: true });
+      dots.forEach(d => d.addEventListener('click', () => {
+        const idx = parseInt(d.dataset.idx);
+        const slideW = slides[0].offsetWidth + 14;
+        track.scrollTo({ left: idx * slideW, behavior: 'smooth' });
+      }));
+
+      // Auto-advance every 4s (pause on touch)
+      let autoTimer = null;
+      let paused = false;
+      function autoAdvance() {
+        if (paused) return;
+        const slideW = slides[0].offsetWidth + 14;
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        const next = track.scrollLeft + slideW;
+        track.scrollTo({ left: next > maxScroll ? 0 : next, behavior: 'smooth' });
+      }
+      autoTimer = setInterval(autoAdvance, 4000);
+      track.addEventListener('touchstart', () => { paused = true; clearInterval(autoTimer); }, { passive: true });
+      track.addEventListener('touchend', () => {
+        paused = false;
+        autoTimer = setInterval(autoAdvance, 4000);
+      }, { passive: true });
+    })();
+
+  </script>
+</body>
+</html>
